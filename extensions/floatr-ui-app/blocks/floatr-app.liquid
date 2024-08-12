@@ -1,0 +1,270 @@
+<link
+  href="https://fonts.googleapis.com/css2?family=Abel&family=Abril+Fatface&family=Alegreya&family=Alfa+Slab+One&family=Antic+Didone&family=Balsamiq+Sans&family=Bebas+Neue&family=Berkshire+Swash&family=Cabin&family=Caveat&family=Cedarville+Cursive&family=Cinzel&family=Comfortaa&family=Cormorant&family=Cormorant+Garamond&family=Crimson+Text&family=Dancing+Script&family=Fira+Sans&family=Fjalla+One&family=Homemade+Apple&family=Inconsolata&family=Indie+Flower&family=Italiana&family=Josefin+Sans&family=Karla&family=La+Belle+Aurore&family=Lato&family=League+Script&family=Lobster&family=Merriweather&family=Montserrat&family=Muli&family=Noto+Sans&family=Nunito&family=Open+Sans&family=Oswald&family=Pacifico&family=Playfair+Display&family=Poppins&family=PT+Sans&family=Quicksand&family=Raleway&family=Roboto&family=Rubik&family=Shadows+Into+Light&family=Source+Sans+Pro&family=Titillium+Web&family=Ubuntu&family=Varela+Round&family=Work+Sans&family=Zilla+Slab&display=swap"
+  rel="stylesheet"
+>
+<style>
+  .floating-bar {
+    z-index: 9999;
+    position: fixed;
+    padding: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+    display: none;
+    color: var(--secondary-color);
+  }
+
+  .floating-bar[data-position='top'] {
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: translateY(-100%);
+  }
+
+  .floating-bar[data-position='bottom'] {
+    display: flex;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .floating-bar[data-position='right'] {
+    display: flex;
+    top: 0;
+    right: 0;
+    height: 100%;
+    transform: translateX(100%);
+    flex-direction: column;
+  }
+
+  .floating-bar[data-position='left'] {
+    display: flex;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(-100%);
+    flex-direction: column;
+  }
+
+  .floating-bar[data-position='top-left'] {
+    display: flex;
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+  }
+
+  .floating-bar[data-position='top-right'] {
+    display: flex;
+    top: 0;
+    right: 0;
+    transform: translateY(-100%);
+  }
+
+  .floating-bar[data-position='bottom-left'] {
+    display: flex;
+    bottom: 0;
+    left: 0;
+  }
+
+  .floating-bar[data-position='bottom-right'] {
+    display: flex;
+    bottom: 0;
+    right: 0;
+  }
+
+  .floating-bar[data-position='center'] {
+    display: flex;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 12px;
+  }
+
+  .floating-bar.show[data-position='top'],
+  .floating-bar.show[data-position='top-left'],
+  .floating-bar.show[data-position='top-right'] {
+    transform: translateY(0);
+  }
+
+  .floating-bar.show[data-position='bottom'],
+  .floating-bar.show[data-position='bottom-left'],
+  .floating-bar.show[data-position='bottom-right'] {
+    transform: translateY(0);
+  }
+
+  .floating-bar.show[data-position='right'] {
+    transform: translateX(0);
+  }
+
+  .floating-bar.show[data-position='left'] {
+    transform: translateX(0);
+  }
+
+  .floating-bar.show[data-position='center'] {
+    transform: translate(-50%, -50%);
+  }
+
+  .floating-bar .content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .floating-bar .title {
+    font-weight: bold;
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    color: var(--primary-color);
+  }
+
+  .floating-bar .description {
+    font-size: 16px;
+    margin: 5px 0 0;
+    padding: 0;
+    color: var(--secondary-color);
+  }
+
+  .floating-bar .cta-button {
+    font-family: inherit;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .floating-bar .cta-button:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-size: 20px;
+    cursor: pointer;
+    visibility: var(--is-closable);
+  }
+</style>
+
+<div
+  x-data="floatingBar()"
+  x-init="init"
+  class="floating-bar"
+  :data-position="position"
+  :style="
+    {
+      fontFamily: fontType.replace('+', ' '),
+      '--primary-color': primaryColor,
+      '--secondary-color': secondaryColor,
+      '--is-closable': isClosable ? 'visible' : 'hidden',
+      backgroundColor: backgroundColor
+    }
+  "
+  :class="{ 'show': isVisible }"
+  x-show="isPublished"
+>
+  <div class="content">
+    <div class="title" x-text="title"></div>
+    <div class="description" x-text="description"></div>
+  </div>
+  <button class="cta-button" @click="handleCTA" x-text="buttonText"></button>
+  <button class="close-button" @click="close">&times;</button>
+</div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script>
+  function hslaToHex(hslaString) {
+    const hsla = JSON.parse(hslaString);
+    const { hue, saturation, brightness, alpha } = hsla;
+
+    const s = saturation;
+    const v = brightness;
+
+    const c = v * s;
+    const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+    const m = v - c;
+
+    let r, g, b;
+
+    if (hue >= 0 && hue < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (hue >= 60 && hue < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (hue >= 120 && hue < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (hue >= 180 && hue < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (hue >= 240 && hue < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else {
+      r = c;
+      g = 0;
+      b = x;
+    }
+
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+
+    return hex;
+  }
+</script>
+<script>
+  const jsonData = {{shop.metafields.floatr.settings}};
+  function floatingBar() {
+    return {
+      position: jsonData.position?.trim() ? jsonData.position : 'top',
+      fontType: jsonData.fontChosen?.trim() ? jsonData.fontChosen : 'Poppins',
+      isClosable: jsonData.isClosable ?? false,
+      backgroundColor:  jsonData.bgColor ? hslaToHex(jsonData.bgColor?.trim()) : '#333',
+      primaryColor:  jsonData.pColor ? hslaToHex(jsonData.pColor?.trim()) : '#f04e23',
+      secondaryColor:  jsonData.sColor ? hslaToHex(jsonData.sColor?.trim()) : '#fff',
+      title: jsonData.textTitleFieldValue?.trim() ? jsonData.textTitleFieldValue : 'New Special Offer!',
+      description: jsonData.contentValue?.trim() ? jsonData.contentValue : 'Get 99% off your first purchase.',
+      buttonText: jsonData.textButtonFieldValue?.trim() ? jsonData.textButtonFieldValue : 'Shop Now',
+      redirectLink: jsonData.urlButtonFieldValue?.trim() ? jsonData.urlButtonFieldValue : '#',
+      isPublished: jsonData.isEnabled ?? false,
+      isVisible: false,
+      init() {
+        setTimeout(() => this.show(), 2000);
+      },
+      show() {
+        if (this.isPublished) {
+          this.isVisible = true;
+          console.log('Floating bar shown');
+        }
+      },
+      close() {
+        console.log('Close button clicked');
+        this.isVisible = false;
+      },
+      handleCTA() {
+        window.location.href = this.redirectLink;
+      },
+    };
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Floatr",
+  "target": "body"
+}
+{% endschema %}

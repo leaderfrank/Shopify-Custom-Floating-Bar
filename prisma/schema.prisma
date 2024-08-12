@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+model Settings {
+  id                   String  @id
+  isEnabled            Boolean @default(false)
+  fontChosen           String  @default("Default")
+  fontsizeValue        Int     @default(16)
+  textTitleFieldValue  String?
+  contentValue         String?
+  canBeClosed          Boolean @default(false)
+  countdown            Boolean @default(false)
+  showCoupon           Boolean @default(false)
+  showButton           Boolean @default(false)
+  collectLeads         Boolean @default(false)
+  expiryDate           Boolean @default(false)
+  expiryDateValue      String?
+  widthChoice          Boolean @default(false)
+  heightChoice         Boolean @default(false)
+  paddingChoice        Boolean @default(false)
+  marginChoice         Boolean @default(false)
+  daysValue            Int?
+  hoursValue           Int?
+  minutesValue         Int?
+  secondsValue         Int?
+  couponValue          String?
+  textButtonFieldValue String?
+  urlButtonFieldValue  String?
+  leadChosen           String  @default("Collect All")
+  positionChosen       String  @default("Top")
+  styleChosen          String  @default("Full Width Bar")
+  bgColor              String  @default("{}")
+  pColor               String  @default("{}")
+  sColor               String  @default("{}")
+  deviceChosen         String  @default("Both")
+  btnEffectChosen      String  @default("None")
+  afterBtnClickChosen  String  @default("Nothing")
+  triggerChosen        String  @default("None")
+  topPaddingValue      Int?
+  bottomPaddingValue   Int?
+  leftPaddingValue     Int?
+  rightPaddingValue    Int?
+  topMarginValue       Int?
+  bottomMarginValue    Int?
+  leftMarginValue      Int?
+  rightMarginValue     Int?
+  widthPixelValue      Int?
+  heightPixelValue     Int?
+}

@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "867e17a6842cdad7b0299097104587d1"
+name = "floatr"
+handle = "floatr-17"
+application_url = "https://audit-cds-neither-tripadvisor.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "coprey-test-317.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://audit-cds-neither-tripadvisor.trycloudflare.com/auth/callback",
+  "https://audit-cds-neither-tripadvisor.trycloudflare.com/auth/shopify/callback",
+  "https://audit-cds-neither-tripadvisor.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks"
+
+[pos]
+embedded = false
